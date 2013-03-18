@@ -120,7 +120,42 @@ public class Bridge {
 			light.getValue().setId(light.getKey());
 			light.getValue().setBridge(this);
 		}
+		for (Entry<String,Group> group : status.getGroups().entrySet()) {
+			group.getValue().setId(group.getKey());
+			group.getValue().setBridge(this);
+		}
 		return true;
+	}
+	
+	/**
+	 * @return get groups ( as they were on connection )
+	 */
+	public Collection<Group> listGroups() {
+		return status.getGroups().values();
+	}
+	
+	
+	/**
+	 * @param id of light to retrieve
+	 * @return light if found, null if not
+	 */
+	public Light getLightById(String id) {
+		return status.getLights().get(id);
+	}
+	
+	/**
+	 * It's better to use the getLightById
+	 * @param name of light to retrieve
+	 * @return light if found, null if not
+	 * @see getLightById
+	 */
+	public Light getLightByName(String name) {
+		for (Light light : status.getLights().values()) {
+			if (name.equals(light.getName())) {
+				return light;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -311,9 +346,9 @@ public class Bridge {
 	 * @param values to change
 	 * @throws IOException
 	 */
-	public void changeLightState(Light light, HashMap<String, Object> values) throws IOException {
+	public void changeState(String relativeUrl, HashMap<String, Object> values) throws IOException {
 		Gson gson = new Gson();
-		HttpPut put = new HttpPut(getRootUrl()+"/lights/"+light.getId()+"/state");
+		HttpPut put = new HttpPut(getRootUrl() + relativeUrl);
 		put.setEntity(new StringEntity(gson.toJson(values)));
 		String str = doRequest(put);
 		
@@ -328,7 +363,7 @@ public class Bridge {
 			throw new IOException(str);
 		}		
 	}
-	
+
 	/**
 	 * Launch a new research for lights
 	 * @throws IOException 
@@ -336,4 +371,5 @@ public class Bridge {
 	public void scanLights() throws IOException {
 		doRequest(new HttpPut(getRootUrl()+"/lights"));
 	}
+
 }

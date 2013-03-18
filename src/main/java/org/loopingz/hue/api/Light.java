@@ -10,26 +10,12 @@ import java.util.HashMap;
  * @author Rémi Cattiau <rcattiau@loopingz.com>
  *
  */
-public class Light {
+public class Light extends ActionObject {
 	
-	/**
-	 * Bridge the light is connected to
-	 */
-	private Bridge bridge;
-	
-	/**
-	 * Light id
-	 */
-	private String id;
 	/**
 	 * Type
 	 */
 	private String type;
-	
-	/**
-	 * Name
-	 */
-	private String name;
 	
 	/**
 	 * Model id
@@ -41,10 +27,6 @@ public class Light {
 	 */
 	private String swversion;
 	
-	/**
-	 * State
-	 */
-	private LightState state;
 
 	/**
 	 * @return the type
@@ -60,19 +42,6 @@ public class Light {
 		this.type = type;
 	}
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	/**
 	 * @return the modelid
@@ -102,41 +71,13 @@ public class Light {
 		this.swversion = swversion;
 	}
 
-	/**
-	 * @return the state
-	 */
-	public LightState getState() {
-		return state;
-	}
-
-	/**
-	 * @param state the state to set
-	 */
-	public void setState(LightState state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the bridge
-	 */
-	public Bridge getBridge() {
-		return bridge;
-	}
-
-	/**
-	 * @param bridge the bridge to set
-	 */
-	public void setBridge(Bridge bridge) {
-		this.bridge = bridge;
-	}
-	
 	
 	/**
 	 * Refresh light information
 	 * @throws IOException 
 	 */
 	public void refresh() throws IOException {
-		bridge.refreshLight(this);
+		getBridge().refreshLight(this);
 	}
 
 	/**
@@ -144,133 +85,17 @@ public class Light {
 	 * @throws IOException
 	 */
 	public void rename(String newName) throws IOException {
-		bridge.renameLight(this, newName);
+		getBridge().renameLight(this, newName);
 		setName(newName);
 	}
 	
 	/**
-	 * Switch on the light
-	 * @throws IOException
+	 * Change state url
+	 * @return
 	 */
-	public void on() throws IOException {
-		HashMap<String,Object> values = new HashMap<String,Object>();
-		values.put("on", true);
-		bridge.changeLightState(this, values);
-		getState().setOn(true);
-	}
-	
-	/**
-	 * Switch off the light
-	 * @throws IOException
-	 */
-	public void off() throws IOException {
-		HashMap<String,Object> values = new HashMap<String,Object>();
-		values.put("on", false);
-		bridge.changeLightState(this, values);
-		getState().setOn(false);
-	}
-	
-	
-	/**
-	 * @param brightness can't be greater than 255
-	 * @throws IOException
-	 */
-	public void setBrightness(int brightness, Integer transition) throws IOException {
-		if (brightness > 255) {
-			throw new IllegalArgumentException();
-		}
-		HashMap<String,Object> values = new HashMap<String,Object>();
-		values.put("bri", brightness);
-		if (transition != null) {
-			values.put("transitiontime",transition);
-		}
-		bridge.changeLightState(this, values);
-		getState().setBri(brightness);
+	@Override
+	public String getChangeStateRelativeUrl() {
+		return "/lights/"+getId()+"/state";
 	}
 
-	/**
-	 * Change color according to Color Temperature 
-	 * @param ct Color temperature
-	 * @param transition in 0,1s ( by default 400 ms )
-	 * @throws IOException
-	 */
-	public void changeColor(Integer ct, Integer transition) throws IOException {
-		HashMap<String,Object> values = new HashMap<String,Object>();
-		values.put("ct", ct);
-		if (transition != null) {
-			values.put("transitiontime",transition);
-		}
-		bridge.changeLightState(this, values);
-		getState().setCt(ct);
-		getState().setColormode("ct");
-	}
-	
-	/**
-	 * Change color according to Hue and Saturation 
-	 * @param hue
-	 * @param saturation
-	 * @param transition in 0,1s ( by default 400 ms )
-	 * @throws IOException
-	 */
-	public void changeColor(Integer hue, Integer saturation, Integer transition) throws IOException {
-		HashMap<String,Object> values = new HashMap<String,Object>();
-		values.put("hue", hue);
-		values.put("sat", saturation);
-		if (transition != null) {
-			values.put("transitiontime",transition);
-		}
-		bridge.changeLightState(this, values);
-		getState().setHue(hue);
-		getState().setSat(saturation);
-		getState().setColormode("hs");
-	}
-	
-	/**
-	 * Change color according to CIE color space 
-	 * @param x
-	 * @param y
-	 * @param transition in 0,1s ( by default 400 ms )
-	 * @throws IOException
-	 */
-	public void changeColor(Float x, Float y, Integer transition) throws IOException {
-		if (x < 0 || x > 1 || y < 0 || y > 1) {
-			throw new IllegalArgumentException();
-		}
-		Float[] args = new Float[2];
-		args[0]=x;
-		args[1]=y;
-		HashMap<String,Object> values = new HashMap<String,Object>();
-		values.put("xy", args);
-		if (transition != null) {
-			values.put("transitiontime",transition);
-		}
-		bridge.changeLightState(this, values);
-		getState().setXy(args);
-		getState().setColormode("xy");
-	}
-	
-	/**
-	 * @param alarm to set
-	 * @throws IOException 
-	 */
-	public void setAlert(AlertEnum alert) throws IOException {
-		HashMap<String,Object> values = new HashMap<String,Object>();
-		values.put("alert", alert.getValue());
-		bridge.changeLightState(this, values);
-		getState().setAlert(alert.getValue());
-	}
-	
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
 }
