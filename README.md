@@ -3,4 +3,7 @@ hue-api
 
 Java library to use Philips Hue
 
-Author: Rémi Cattiau <rcattiau@loopingz.com>
+Deprecated as Philips has released their own [API][1]
+
+
+  [1]: https://github.com/PhilipsHue/PhilipsHueSDK-Java-MultiPlatform-Android: Rémi Cattiau <rcattiau@loopingz.com>

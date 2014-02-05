@@ -17,7 +17,7 @@ import org.loopingz.hue.api.Light;
  */
 public class BridgeTest {
 	private Bridge bridge = null;
-	//@Test
+	@Test
 	public void listBridges() throws BridgeDetectionException, IOException, InterruptedException {
 		bridge = Bridge.get();
 		System.out.println(bridge);
@@ -31,7 +31,7 @@ public class BridgeTest {
 		} else {
 			System.out.println("org.loopingz.hue.api test is registered");
 		}
-		setTempColor();
+		switchOff();
 	}
 	
 	public void switchOff() throws IOException {
@@ -65,7 +65,8 @@ public class BridgeTest {
 	private Light getTestLight() {
 		Collection<Light> lights = bridge.listLights();
 		for (Light light : lights) {
-			if ("Salon".equals(light.getName())) {
+			if ("Couloir Haut".equals(light.getName())) {
+				System.out.println("Return test light : " + light.getId() + " " + light.getSwversion());
 				return light;
 			}
 		}
