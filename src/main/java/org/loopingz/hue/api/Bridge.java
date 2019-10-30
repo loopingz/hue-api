@@ -174,7 +174,7 @@ public class Bridge {
 		
 		// Use the meet hue "upnp"
 		HttpClient httpClient = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet("http://www.meethue.com/api/nupnp");
+		HttpGet httpGet = new HttpGet("https://discovery.meethue.com/");
 		HttpResponse response = null;
 		try {
 			response = httpClient.execute(httpGet);
